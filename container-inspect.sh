@@ -18,6 +18,25 @@ warn() { echo -e "  ${YELLOW}⚠${RESET}   $1"; }
 err()  { echo -e "  ${RED}✖${RESET}  $1"; }
 row()  { printf "  %-18s %s\n" "$1" "$2"; }
 
+# ── check dependencies ───────────────────────
+check_deps() {
+  local missing=()
+  
+  if ! command -v jq &>/dev/null; then
+    missing+=("jq")
+  fi
+  
+  if ! command -v crictl &>/dev/null; then
+    missing+=("crictl")
+  fi
+  
+  if [[ ${#missing[@]} -gt 0 ]]; then
+    err "Missing required dependencies: ${missing[*]}"
+    echo -e "  ${DIM}Install with: apt install jq && apt install crictl${RESET}"
+    exit 1
+  fi
+}
+
 usage() {
   echo -e "${BOLD}Usage:${RESET}"
   echo "  $0 <container-id>        resolve PID via crictl, then inspect"
@@ -40,14 +59,12 @@ case "$1" in
     CONTAINER_ID="$1" ;;
 esac
 
+# ── check dependencies ──────────────────────
+check_deps
+
 # ── resolve PID from container ID ────────────
 if [[ -n "$CONTAINER_ID" ]]; then
   hdr "Resolving PID for container: $CONTAINER_ID"
-
-  if ! command -v crictl &>/dev/null; then
-    err "crictl not found — pass --pid <pid> directly"
-    exit 1
-  fi
 
   PID=$(crictl inspect "$CONTAINER_ID" 2>/dev/null | jq -r '.info.pid' 2>/dev/null || true)
 
