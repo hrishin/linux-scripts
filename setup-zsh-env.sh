@@ -206,20 +206,6 @@ alias pup="pulumi up -y"
 alias pdst="pulumi destroy -y"
 alias psop="pulumi stack output"
 
-# ---------------------------------------------------------------------------
-# Pulumi
-# ---------------------------------------------------------------------------
-export PULUMI_CONFIG_PASSPHRASE=""
-
-# ---------------------------------------------------------------------------
-# SOPS / age
-# ---------------------------------------------------------------------------
-export SOPS_AGE_KEY_FILE="$HOME/.age/k8s-key.age"
-
-# ---------------------------------------------------------------------------
-# GitHub token — set manually (do NOT commit the actual value)
-# export GH_TOKEN="<your-token>"
-# ---------------------------------------------------------------------------
 PROFILE
 
   info "~/.profile written"
